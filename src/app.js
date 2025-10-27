@@ -1,9 +1,10 @@
 const express = require("express");
 const connectDB = require("./config/database")
 const app = express();
-const User = require("./models/user");
+const User = require("./models/user"); // Adjust the path to where the User model is defined
 
 app.post("/signup", async (req,res) => {
+
     // Creating a new instance of the User model
     const user = new User({
         firstName: "Divya",
@@ -12,6 +13,7 @@ app.post("/signup", async (req,res) => {
         age: 16,
         gender: "Female"
     });
+    
     // Save the document to the database
     try {
         await user.save();
