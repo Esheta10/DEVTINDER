@@ -27,6 +27,65 @@ app.post("/signup", async (req,res) => {
     }
 })
 
+// Get User by email
+app.get("/user", async (req,res) => {
+    const userEmail = req.body.email;
+
+   try{
+    const users = await User.findOne({email: userEmail});
+
+    if(users.length === 0){
+        res.status(404).send("No User Found!")
+    } else {
+        res.send(users);
+    }
+   }
+   catch(err){
+    res.status(400).send("Something went wrong!")
+   }
+})
+
+// Feed API - to get all the users from the database
+app.get("/feed", async(req,res) => {
+    try {
+        const users = await User.find({});
+        res.send(users);
+    } catch(err) {
+        res.status(404).send("No data found.");
+    }
+})
+
+// Delete User API -  deleting a used by its _id
+app.delete("/user", async(req,res) => {
+    const userID = req.body._id;
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(userID);
+        if(!deletedUser){
+            return res.status(400).send("User not found");
+        }
+        res.status(200).send("User deleted successfully");
+    } catch(err) {
+        res.status(404).send("Something went wrong while deleting user");
+    }
+});
+
+// patch user API - updating the data of the user
+app.patch("/user", async (req,res) => {
+    const userID  = req.body._id;
+    const {_id,...updateData} = req.body;   // Exclude _id from update
+
+    try{
+        const updatedUser = await User.findByIdAndUpdate(userID, updateData, {returnDocument: "after"});
+        if(!updatedUser){
+            res.status(404).send("User not found!");
+        }
+        console.log("Updated user: ",updatedUser);
+        res.status(200).send("User updated successfully");
+    } catch(err) {
+        res.status(404).send("Something went wrong");
+    }
+})
 
 connectDB()
 .then(() => {
