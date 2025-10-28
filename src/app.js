@@ -3,16 +3,20 @@ const connectDB = require("./config/database")
 const app = express();
 const User = require("./models/user"); // Adjust the path to where the User model is defined
 
+app.use(express.json());
+
 app.post("/signup", async (req,res) => {
 
     // Creating a new instance of the User model
-    const user = new User({
-        firstName: "Divya",
-        lastName: "Baid",
-        email: "divya@baid.com",
-        age: 16,
-        gender: "Female"
-    });
+    // const user = new User({
+    //     firstName: "Divya",
+    //     lastName: "Baid",
+    //     email: "divya@baid.com",
+    //     age: 16,
+    //     gender: "Female"
+    // });
+
+    const user = new User(req.body);
     
     // Save the document to the database
     try {
