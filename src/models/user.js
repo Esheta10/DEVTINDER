@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true
+        required: true,
     },
     lastName: {
         type: String,
@@ -15,6 +15,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true,
+        trim: true,
     },
     age: {
         type: Number,
@@ -23,8 +24,24 @@ const userSchema = new mongoose.Schema({
     gender: {
         type: String,
         enum: ['Male','Female','Other']
+    },
+    photoURL: {
+        type: String,
+        default: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.mauicardiovascularsymposium.com%2Fjohn-b-gordon-md-facc%2Fdummy-profile-pic-300x300%2F&psig=AOvVaw0q1BHF79oagWDiePx3KMX_&ust=1761739727250000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLiDoYnuxpADFQAAAAAdAAAAABAE",
+    },
+    about: {
+        type: String,
+        default: "This is a default about section of the user.",
+    },
+    skills: {
+        type: [String],
+    },
+   
+},
+    {
+        timestamps: true,
     }
-});
+);
 
 // Create a User model from the Schema
 
