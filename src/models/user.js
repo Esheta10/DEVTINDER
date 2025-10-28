@@ -22,6 +22,11 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
     },
+    password: {
+        type: String,
+        trim:true,
+        required: true
+    },
     age: {
         type: Number,
         min: 18
@@ -30,7 +35,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ['Male','Female','Other'],
         validate(value){
-            if(!["male","female","others"].includes(value)){
+            if(!["Male","Female","Others"].includes(value)){
                 throw new Error("Not a valid gender.");
             }
         }

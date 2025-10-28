@@ -2,6 +2,8 @@ const express = require("express");
 const connectDB = require("./config/database")
 const app = express();
 const User = require("./models/user"); // Adjust the path to where the User model is defined
+const {validateSignUpData} = require("./utils/validation")
+const bcrypt = require("bcrypt")
 
 app.use(express.json());
 
@@ -16,10 +18,23 @@ app.post("/signup", async (req,res) => {
     //     gender: "Female"
     // });
 
-    const user = new User(req.body);
+    const user = new User({
+        firstName,
+        lastName,
+        email,
+        password: passwordHash
+    });
     
     // Save the document to the database
     try {
+        // Validation of data
+        validateSignUpData(req);
+
+        // Encrypt the password
+        const {password} = req.body;
+        const passwordHash = await bcrypt.hash(password,10);
+        console.log(passwordHash);
+
         await user.save();
         res.send("User added successfully!")
     } catch(err) {
