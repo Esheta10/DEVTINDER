@@ -8,32 +8,26 @@ const bcrypt = require("bcrypt")
 app.use(express.json());
 
 app.post("/signup", async (req,res) => {
+ 
+    try {
+        // Validation of data
 
-    // Creating a new instance of the User model
-    // const user = new User({
-    //     firstName: "Divya",
-    //     lastName: "Baid",
-    //     email: "divya@baid.com",
-    //     age: 16,
-    //     gender: "Female"
-    // });
+        validateSignUpData(req);
+        const {firstName,lastName,email,password,age,gender} = req.body;
+        
+       // Encrypt the password
+       // const {password} = req.body;
+        const passwordHash = await bcrypt.hash(password,10);
+        console.log(passwordHash);
 
-    const user = new User({
+        const user = new User({
         firstName,
         lastName,
         email,
-        password: passwordHash
+        password: passwordHash,
+        age,
+        gender,
     });
-    
-    // Save the document to the database
-    try {
-        // Validation of data
-        validateSignUpData(req);
-
-        // Encrypt the password
-        const {password} = req.body;
-        const passwordHash = await bcrypt.hash(password,10);
-        console.log(passwordHash);
 
         await user.save();
         res.send("User added successfully!")
@@ -41,6 +35,28 @@ app.post("/signup", async (req,res) => {
         res.status(400).send("Error saving the user: " + err.message);
     }
 })
+
+app.post("/login", async (req,res) => {
+    try {
+        const {email,password} = req.body;
+
+        const user = await User.findOne({email:email});
+        if(!user){
+            throw new Error("Invalid credential");
+        }
+
+        const isValidPassword = await bcrypt.compare(password,user.password);
+
+        if(isValidPassword){
+            res.send("Login successful!");
+        }else{
+            throw new Error("Invalid credentials");
+        }
+    } catch(err) {
+        res.status(404).send("ERROR: " + err.message);
+    }
+})
+
 
 // Get User by email
 app.get("/user", async (req,res) => {
