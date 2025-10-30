@@ -24,3 +24,4 @@ profileRouter.get("/profile", userAuth, async(req,res) => {
 
 
 module.exports = profileRouter;
+
