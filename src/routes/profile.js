@@ -1,22 +1,26 @@
 const express = require("express");
+const profileRouter = express.Router();
 
-const router = express.Router();
+const User = require("../models/user");
+const { userAuth } = require("../middlewares/auth")
+const jwt = require("jsonwebtoken")
 
-router.get("/profile", userAuth, async(req,res) => {
+profileRouter.get("/profile", userAuth, async(req,res) => {
 
     const cookies = req.cookies;
     console.log(cookies);
-    res.send("Reading cookies");
 
 
     const {token} = cookies;
     // Validate my token
     const decodedMessage = await jwt.verify(token,"DEV@TINDER$790");
-    console.log(decodedMessage);
-    const {_id} = decodedMessage;
+    const {_id,firstName,lastName,email,password,age,gender} = decodedMessage;
+
     console.log("Logged in user is: " + _id);
+     const user = req.user;
+    res.send(user);
 
 })
 
 
-module.exports = router;
+module.exports = profileRouter;
