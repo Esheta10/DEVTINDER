@@ -36,31 +36,50 @@ authRouter.post("/signup", async (req,res) => {
     }
 })
 
-authRouter.post("/login", async (req,res) => {
+// Login route — authenticates user and issues a JWT cookie
+authRouter.post("/login", async (req, res) => {
     try {
-        const {email,password} = req.body;
+        // Extract email and password from the incoming request body
+        const { email, password } = req.body;
 
-        const user = await User.findOne({email:email});
-        if(!user){
-            throw new Error("Invalid credential");
+        // Check if a user with this email exists in the database
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            throw new Error("Invalid credential"); // Email not registered
         }
 
-        const isValidPassword = await bcrypt.compare(password,user.password);
+        // Compare the plain-text password with the hashed password in DB
+        const isValidPassword = await bcrypt.compare(password, user.password);
 
-        if(isValidPassword){
-            // Create a JWT Token
-            const token = await jwt.sign({_id: user._id},"DEV@TINDER$790",{expiresIn: "1d"});
-            console.log(token);
-            // Add the token to cookie and send the response back to the user
-            res.cookie("token",token);
+        if (isValidPassword) {
+            // Generate a JWT token with user's ID and a 1-day expiry
+            const token = await jwt.sign(
+                { _id: user._id },
+                "DEV@TINDER$790", // secret key (move this to .env in real apps)
+                { expiresIn: "1d" }
+            );
+            console.log(token); // Debug log — shows token on server console
 
+            // Store token in cookie so frontend can access it for authenticated requests
+            res.cookie("token", token);
+
+            // Send success response back to client
             res.send("Login successful!");
-        }else{
+        } else {
+            // If password doesn't match
             throw new Error("Invalid credentials");
         }
-    } catch(err) {
+    } catch (err) {
+        // Handle any errors (wrong creds, DB issues, etc.)
         res.status(404).send("ERROR: " + err.message);
     }
+});
+
+authRouter.post("/logout", async(req,res) => {
+    res.cookie("token",null,{
+        expires: new Date(Date.now()),
+    });
+    res.send("Logged out");
 })
 
 module.exports = authRouter;
