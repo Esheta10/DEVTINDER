@@ -34,12 +34,12 @@ const userSchema = new mongoose.Schema({
     gender: {
         type: String,
         enum: ['Male','Female','Other'],
-        validate(value){
-            if(!["Male","Female","Others"].includes(value)){
-                throw new Error("Not a valid gender.");
-            }
-        }
-    },
+        message: `{VALUE} is not a valid gender type`
+        // validate(value){
+        //     if(!["Male","Female","Others"].includes(value)){
+        //         throw new Error("Not a valid gender.");
+        //     }
+        },
     photoURL: {
         type: String,
         default: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.mauicardiovascularsymposium.com%2Fjohn-b-gordon-md-facc%2Fdummy-profile-pic-300x300%2F&psig=AOvVaw0q1BHF79oagWDiePx3KMX_&ust=1761739727250000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCLiDoYnuxpADFQAAAAAdAAAAABAE",
